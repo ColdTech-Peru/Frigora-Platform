@@ -1,7 +1,7 @@
 package com.frigora.frigoraplatform.shared.interfaces.rest.resources;
 
 /**
- * Message Resource :V
+ * Message Resource by kENYI
  */
 public record MessageResource(String message) {
 }
