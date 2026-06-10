@@ -1,0 +1,4 @@
+package frigoraplatform.monitoring.domain.model.commands;
+
+public record DeleteAlertCommand(Long id) {
+}

@@ -1,0 +1,81 @@
+package frigoraplatform.monitoring.interfaces.rest;
+
+import frigoraplatform.monitoring.domain.model.commands.AcknowledgeAlertCommand;
+import frigoraplatform.monitoring.domain.model.commands.DeleteAlertCommand;
+import frigoraplatform.monitoring.domain.model.queries.GetAllAlertsByEquipmentIdQuery;
+import frigoraplatform.monitoring.domain.model.queries.GetAllAlertsByTenantIdQuery;
+import frigoraplatform.monitoring.domain.model.queries.GetAllAlertsQuery;
+import frigoraplatform.monitoring.domain.model.queries.GetAlertByIdQuery;
+import frigoraplatform.monitoring.domain.services.AlertCommandService;
+import frigoraplatform.monitoring.domain.services.AlertQueryService;
+import frigoraplatform.monitoring.interfaces.rest.resources.AlertResource;
+import frigoraplatform.monitoring.interfaces.rest.resources.CreateAlertResource;
+import frigoraplatform.monitoring.interfaces.rest.transform.AlertResourceFromEntityAssembler;
+import frigoraplatform.monitoring.interfaces.rest.transform.CreateAlertCommandFromResourceAssembler;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.net.URI;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v1/Alert")
+@RequiredArgsConstructor
+public class AlertController {
+
+    private final AlertCommandService alertCommandService;
+    private final AlertQueryService alertQueryService;
+    private final AlertResourceFromEntityAssembler alertResourceFromEntityAssembler;
+    private final CreateAlertCommandFromResourceAssembler createAlertCommandFromResourceAssembler;
+
+    @GetMapping
+    public ResponseEntity<List<AlertResource>> getAll(
+            @RequestParam(required = false) Long tenantId,
+            @RequestParam(required = false) Long equipmentId) {
+        var alerts = tenantId != null
+                ? alertQueryService.getAllByTenantId(new GetAllAlertsByTenantIdQuery(tenantId))
+                : equipmentId != null
+                ? alertQueryService.getAllByEquipmentId(new GetAllAlertsByEquipmentIdQuery(equipmentId))
+                : alertQueryService.getAll(new GetAllAlertsQuery());
+
+        return ResponseEntity.ok(alertResourceFromEntityAssembler.toResources(alerts));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AlertResource> getById(@PathVariable Long id) {
+        return alertQueryService.getById(new GetAlertByIdQuery(id))
+                .map(alert -> ResponseEntity.ok(alertResourceFromEntityAssembler.toResource(alert)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public ResponseEntity<AlertResource> create(@Valid @RequestBody CreateAlertResource resource) {
+        var created = alertCommandService.create(createAlertCommandFromResourceAssembler.toCommand(resource));
+        var response = alertResourceFromEntityAssembler.toResource(created);
+        return ResponseEntity.created(URI.create("/api/v1/Alert/" + response.getId())).body(response);
+    }
+
+    @PatchMapping("/{id}/acknowledge")
+    public ResponseEntity<AlertResource> acknowledge(@PathVariable Long id) {
+        return alertCommandService.acknowledge(new AcknowledgeAlertCommand(id))
+                .map(alert -> ResponseEntity.ok(alertResourceFromEntityAssembler.toResource(alert)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        var deleted = alertCommandService.delete(new DeleteAlertCommand(id));
+        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+}
