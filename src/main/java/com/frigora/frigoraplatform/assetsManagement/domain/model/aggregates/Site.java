@@ -1,0 +1,52 @@
+package com.frigora.frigoraplatform.assetsManagement.domain.model.aggregates;
+
+import com.frigora.frigoraplatform.assetsManagement.domain.model.commands.CreateSiteCommand;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+public class Site extends SiteAudit {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private String address;
+
+    @Column(nullable = false)
+    private String contactName;
+
+    @Column(nullable = false)
+    private String phone;
+
+    protected Site() {
+        this.name = "";
+        this.address = "";
+        this.contactName = "";
+        this.phone = "";
+    }
+
+    protected Site(String name, String address, String contactName, String phone) {
+        this.name = name;
+        this.address = address;
+        this.contactName = contactName;
+        this.phone = phone;
+    }
+
+    /**
+     * Constructor for Site aggregate
+     *
+     * @param command The command to create a site
+     */
+    public Site(CreateSiteCommand command) {
+        this.name = command.name();
+        this.address = command.address();
+        this.contactName = command.contactName();
+        this.phone = command.phone();
+    }
+
+}
