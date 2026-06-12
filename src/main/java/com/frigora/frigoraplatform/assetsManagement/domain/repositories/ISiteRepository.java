@@ -1,30 +1,16 @@
 package com.frigora.frigoraplatform.assetsManagement.domain.repositories;
 
 import com.frigora.frigoraplatform.assetsManagement.domain.model.aggregates.Site;
-import com.frigora.frigoraplatform.assetsManagement.domain.model.queries.GetAllSitesQuery;
-import com.frigora.frigoraplatform.assetsManagement.domain.model.queries.GetSiteByIdQuery;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
+@Repository
+public interface ISiteRepository extends JpaRepository<Site, Integer> {
 
-public interface ISiteRepository {
-    /**
-     * Handle the GetSiteByIdQuery
-     * <p>
-     * This method handles the GetSiteByIdQuery to retrieve a
-     * Site entity by its unique identifier.
-     * </p>
-     *
-     * @param query The GetSiteByIdQuery query
-     * @return An Optional containing the Site if found; otherwise, empty
-     */
-    Optional<Site> handle(GetSiteByIdQuery query);
+    // - save(Site entity)
+    // - findById(Integer id)
+    // - delete(Site entity)
+    // - findAll()
+    // - Y muchos más...
 
-    /**
-     * Handle the GetAllSitesQuery
-     *
-     * @param query The GetAllSitesQuery query
-     * @return A list of all Site entities
-     */
-    List<Site> handle(GetAllSitesQuery query);
 }
