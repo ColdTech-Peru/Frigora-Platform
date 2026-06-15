@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReportRepository {
-    // Métodos de escritura
+    // Metodos de escritura
     Report save(Report report);
     void delete(Report report);
 
-    // Métodos de lectura
+    // Metodos de lectura
     Optional<Report> findById(Integer id);
     List<Report> findAll();
     List<Report> findAllByTenantId(Integer tenantId);

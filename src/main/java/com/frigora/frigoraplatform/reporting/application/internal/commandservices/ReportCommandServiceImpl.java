@@ -38,7 +38,7 @@ public class ReportCommandServiceImpl implements ReportCommandService {
         }
 
         var report = result.get();
-        // El método de actualización que definimos en el Aggregate
+        // El método de actualizaciÃ³n que definimos en el Aggregate
         report.updateReport(
                 command.tenantId(),
                 command.equipmentId(),

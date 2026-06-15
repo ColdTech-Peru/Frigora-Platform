@@ -9,9 +9,9 @@ import java.util.List;
 @Repository
 public interface JpaReportRepository extends JpaRepository<Report, Integer> {
 
-    // Spring Data JPA crea la query "SELECT * FROM reports WHERE tenant_id = ?" automáticamente
+    // Spring Data JPA crea la query "SELECT * FROM reports WHERE tenant_id = ?" automaticamente
     List<Report> findAllByTenantId(Integer tenantId);
 
-    // Spring Data JPA crea la query "SELECT * FROM reports WHERE equipment_id = ?" automáticamente
+    // Spring Data JPA crea la query "SELECT * FROM reports WHERE equipment_id = ?" automaticamente
     List<Report> findAllByEquipmentId(Integer equipmentId);
 }
