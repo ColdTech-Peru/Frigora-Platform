@@ -144,4 +144,21 @@ public class ServiceRequestsController {
         var serviceRequestResource = ServiceRequestResourceFromEntityAssembler.toResourceFromEntity(serviceRequest.get());
         return ResponseEntity.ok(serviceRequestResource);
     }
+
+    @DeleteMapping("/{serviceRequestId}")
+    @Operation(summary = "Delete a Service Request", description = "Deletes a Service Request by its Id", operationId = "DeleteServiceRequest")
+    @ApiResponse(responseCode = "200", description = "The service request was deleted")
+    @ApiResponse(responseCode = "404", description = "The service request was not found")
+    public ResponseEntity<?> deleteServiceRequest(@PathVariable int serviceRequestId) {
+
+        var command = new DeleteServiceRequestCommand(serviceRequestId);
+
+        boolean deleted = serviceRequestCommandService.handle(command);
+
+        if (!deleted) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok().build();
+    }
 }
