@@ -35,7 +35,7 @@ public class UsersController {
     @GetMapping("/{id}")
     @Operation(summary = "Get a user by its id", description = "Get a user by its id", operationId = "GetUserById")
     @ApiResponse(responseCode = "200", description = "The user was found")
-    public ResponseEntity<?> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserResource> getUserById(@PathVariable Long id) {
         var query = new GetUserByIdQuery(id);
         var user = userQueryService.handle(query);
         if (user.isEmpty()) return ResponseEntity.notFound().build();

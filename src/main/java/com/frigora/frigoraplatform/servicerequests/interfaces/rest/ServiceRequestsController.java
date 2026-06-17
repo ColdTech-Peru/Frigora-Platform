@@ -9,6 +9,7 @@ import com.frigora.frigoraplatform.servicerequests.domain.services.ServiceReques
 import com.frigora.frigoraplatform.servicerequests.domain.services.ServiceRequestQueryService;
 import com.frigora.frigoraplatform.servicerequests.interfaces.rest.resources.AssignTechnicianToServiceRequestResource;
 import com.frigora.frigoraplatform.servicerequests.interfaces.rest.resources.CreateServiceRequestResource;
+import com.frigora.frigoraplatform.servicerequests.interfaces.rest.resources.ServiceRequestResource;
 import com.frigora.frigoraplatform.servicerequests.interfaces.rest.transform.CreateServiceRequestCommandFromResourceAssembler;
 import com.frigora.frigoraplatform.servicerequests.interfaces.rest.transform.ServiceRequestResourceFromEntityAssembler;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +37,7 @@ public class ServiceRequestsController {
     @PostMapping
     @Operation(summary = "Create a Service Request", description = "Creates a new Service Request", operationId = "CreateServiceRequest")
     @ApiResponse(responseCode = "201", description = "The service request was created")
-    public ResponseEntity<?> createServiceRequest(@RequestBody CreateServiceRequestResource resource) {
+    public ResponseEntity<ServiceRequestResource> createServiceRequest(@RequestBody CreateServiceRequestResource resource) {
         var command = CreateServiceRequestCommandFromResourceAssembler.toCommandFromResource(resource);
         var serviceRequest = serviceRequestCommandService.handle(command);
         if (serviceRequest.isEmpty()) return ResponseEntity.badRequest().build();
@@ -49,7 +50,7 @@ public class ServiceRequestsController {
     @Operation(summary = "Get Service Request by Id", description = "Gets a Service Request by its Id", operationId = "GetServiceRequestById")
     @ApiResponse(responseCode = "200", description = "The service request was found")
     @ApiResponse(responseCode = "404", description = "The service request was not found")
-    public ResponseEntity<?> getServiceRequestById(@PathVariable int serviceRequestId) {
+    public ResponseEntity<ServiceRequestResource> getServiceRequestById(@PathVariable int serviceRequestId) {
         var query = new GetServiceRequestByIdQuery(serviceRequestId);
         var serviceRequest = serviceRequestQueryService.handle(query);
         if (serviceRequest.isEmpty()) return ResponseEntity.notFound().build();
@@ -87,7 +88,7 @@ public class ServiceRequestsController {
     @Operation(summary = "Accept a Service Request", description = "Accepts a Service Request by its Id", operationId = "AcceptServiceRequest")
     @ApiResponse(responseCode = "200", description = "The service request was accepted")
     @ApiResponse(responseCode = "404", description = "The service request was not found")
-    public ResponseEntity<?> acceptServiceRequest(@PathVariable int serviceRequestId) {
+    public ResponseEntity<ServiceRequestResource> acceptServiceRequest(@PathVariable int serviceRequestId) {
         var command = new AcceptServiceRequestCommand(serviceRequestId);
         var serviceRequest = serviceRequestCommandService.handle(command);
         if (serviceRequest.isEmpty()) return ResponseEntity.notFound().build();
@@ -99,7 +100,7 @@ public class ServiceRequestsController {
     @Operation(summary = "Reject a Service Request", description = "Rejects a Service Request by its Id", operationId = "RejectServiceRequest")
     @ApiResponse(responseCode = "200", description = "The service request was rejected")
     @ApiResponse(responseCode = "404", description = "The service request was not found")
-    public ResponseEntity<?> rejectServiceRequest(@PathVariable int serviceRequestId) {
+    public ResponseEntity<ServiceRequestResource> rejectServiceRequest(@PathVariable int serviceRequestId) {
         var command = new RejectServiceRequestCommand(serviceRequestId);
         var serviceRequest = serviceRequestCommandService.handle(command);
         if (serviceRequest.isEmpty()) return ResponseEntity.notFound().build();
@@ -111,7 +112,7 @@ public class ServiceRequestsController {
     @Operation(summary = "Cancel a Service Request", description = "Cancels a Service Request by its Id", operationId = "CancelServiceRequest")
     @ApiResponse(responseCode = "200", description = "The service request was canceled")
     @ApiResponse(responseCode = "404", description = "The service request was not found")
-    public ResponseEntity<?> cancelServiceRequest(@PathVariable int serviceRequestId) {
+    public ResponseEntity<ServiceRequestResource> cancelServiceRequest(@PathVariable int serviceRequestId) {
         var command = new CancelServiceRequestCommand(serviceRequestId);
         var serviceRequest = serviceRequestCommandService.handle(command);
         if (serviceRequest.isEmpty()) return ResponseEntity.notFound().build();
@@ -123,7 +124,7 @@ public class ServiceRequestsController {
     @Operation(summary = "Assign Technician to Service Request", description = "Assigns a technician to a Service Request by its Id", operationId = "AssignTechnicianToServiceRequest")
     @ApiResponse(responseCode = "200", description = "The technician was assigned")
     @ApiResponse(responseCode = "404", description = "The service request was not found")
-    public ResponseEntity<?> assignTechnicianToServiceRequest(
+    public ResponseEntity<ServiceRequestResource> assignTechnicianToServiceRequest(
             @PathVariable int serviceRequestId,
             @RequestBody AssignTechnicianToServiceRequestResource resource) {
         var command = new AssignTechnicianToServiceRequestCommand(serviceRequestId, resource.technicianId());
@@ -137,7 +138,7 @@ public class ServiceRequestsController {
     @Operation(summary = "Complete a Service Request", description = "Completes a Service Request by its Id", operationId = "CompleteServiceRequest")
     @ApiResponse(responseCode = "200", description = "The service request was completed")
     @ApiResponse(responseCode = "404", description = "The service request was not found")
-    public ResponseEntity<?> completeServiceRequest(@PathVariable int serviceRequestId) {
+    public ResponseEntity<ServiceRequestResource> completeServiceRequest(@PathVariable int serviceRequestId) {
         var command = new CompleteServiceRequestCommand(serviceRequestId);
         var serviceRequest = serviceRequestCommandService.handle(command);
         if (serviceRequest.isEmpty()) return ResponseEntity.notFound().build();
@@ -149,7 +150,7 @@ public class ServiceRequestsController {
     @Operation(summary = "Delete a Service Request", description = "Deletes a Service Request by its Id", operationId = "DeleteServiceRequest")
     @ApiResponse(responseCode = "200", description = "The service request was deleted")
     @ApiResponse(responseCode = "404", description = "The service request was not found")
-    public ResponseEntity<?> deleteServiceRequest(@PathVariable int serviceRequestId) {
+    public ResponseEntity<Void> deleteServiceRequest(@PathVariable int serviceRequestId) {
 
         var command = new DeleteServiceRequestCommand(serviceRequestId);
 

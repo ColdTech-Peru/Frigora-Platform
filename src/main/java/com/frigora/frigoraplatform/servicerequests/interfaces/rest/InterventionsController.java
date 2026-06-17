@@ -4,6 +4,7 @@ import com.frigora.frigoraplatform.servicerequests.domain.model.queries.GetInter
 import com.frigora.frigoraplatform.servicerequests.domain.model.queries.GetInterventionsByServiceRequestIdQuery;
 import com.frigora.frigoraplatform.servicerequests.domain.services.InterventionCommandService;
 import com.frigora.frigoraplatform.servicerequests.domain.services.InterventionQueryService;
+import com.frigora.frigoraplatform.servicerequests.interfaces.rest.resources.InterventionResource;
 import com.frigora.frigoraplatform.servicerequests.interfaces.rest.resources.RecordInterventionResource;
 import com.frigora.frigoraplatform.servicerequests.interfaces.rest.transform.InterventionResourceFromEntityAssembler;
 import com.frigora.frigoraplatform.servicerequests.interfaces.rest.transform.RecordInterventionCommandFromResourceAssembler;
@@ -34,7 +35,7 @@ public class InterventionsController {
             description = "Records a new Intervention for a Service Request",
             operationId = "RecordIntervention")
     @ApiResponse(responseCode = "201", description = "The intervention was recorded")
-    public ResponseEntity<?> recordIntervention(@RequestBody RecordInterventionResource resource) {
+    public ResponseEntity<InterventionResource> recordIntervention(@RequestBody RecordInterventionResource resource) {
         var command = RecordInterventionCommandFromResourceAssembler.toCommandFromResource(resource);
         var intervention = interventionCommandService.handle(command);
         if (intervention.isEmpty()) return ResponseEntity.badRequest().build();
@@ -49,7 +50,7 @@ public class InterventionsController {
             operationId = "GetInterventionById")
     @ApiResponse(responseCode = "200", description = "The intervention was found")
     @ApiResponse(responseCode = "404", description = "The intervention was not found")
-    public ResponseEntity<?> getInterventionById(@PathVariable int interventionId) {
+    public ResponseEntity<InterventionResource> getInterventionById(@PathVariable int interventionId) {
         var query = new GetInterventionByIdQuery(interventionId);
         var intervention = interventionQueryService.handle(query);
         if (intervention.isEmpty()) return ResponseEntity.notFound().build();
