@@ -1,6 +1,5 @@
 package com.frigora.frigoraplatform.reporting.interfaces.rest;
 
-
 import com.frigora.frigoraplatform.reporting.domain.model.commands.DeleteReportCommand;
 import com.frigora.frigoraplatform.reporting.domain.model.queries.GetAllReportsByEquipmentIdQuery;
 import com.frigora.frigoraplatform.reporting.domain.model.queries.GetAllReportsByTenantIdQuery;
@@ -18,10 +17,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/reports") //
+@RequestMapping("/api/v1/reports")
+@Tag(name = "Reporting", description = "Available reporting endpoints")
 public class ReportController {
 
     private final ReportCommandService reportCommandService;
@@ -33,6 +36,7 @@ public class ReportController {
     }
 
     @PostMapping
+    @Operation(summary = "Crear un nuevo reporte", description = "Registra un nuevo reporte en la base de datos.")
     public ResponseEntity<ReportResource> createReport(@RequestBody CreateReportResource resource) {
         var command = CreateReportCommandFromResourceAssembler.toCommandFromResource(resource);
         var report = reportCommandService.handle(command);
@@ -43,6 +47,7 @@ public class ReportController {
     }
 
     @GetMapping("/{reportId}")
+    @Operation(summary = "Obtener un reporte por ID", description = "Devuelve los detalles de un reporte específico buscándolo por su ID único.")
     public ResponseEntity<ReportResource> getReportById(@PathVariable Integer reportId) {
         var query = new GetReportByIdQuery(reportId);
         var report = reportQueryService.handle(query);
@@ -53,6 +58,7 @@ public class ReportController {
     }
 
     @GetMapping
+    @Operation(summary = "Obtener todos los reportes", description = "Devuelve una lista completa de reportes.")
     public ResponseEntity<List<ReportResource>> getAllReports(
             @RequestParam(required = false) Integer tenantId,
             @RequestParam(required = false) Integer equipmentId) {
@@ -75,6 +81,7 @@ public class ReportController {
     }
 
     @PutMapping("/{reportId}")
+    @Operation(summary = "Actualizar un reporte", description = "Actualiza la información de un reporte existente mediante su ID.")
     public ResponseEntity<ReportResource> updateReport(@PathVariable Integer reportId, @RequestBody UpdateReportResource resource) {
         var command = UpdateReportCommandFromResourceAssembler.toCommandFromResource(reportId, resource);
         var report = reportCommandService.handle(command);
@@ -85,6 +92,7 @@ public class ReportController {
     }
 
     @DeleteMapping("/{reportId}")
+    @Operation(summary = "Eliminar un reporte", description = "Elimina permanentemente un reporte del sistema utilizando su ID.")
     public ResponseEntity<?> deleteReport(@PathVariable Integer reportId) {
         var command = new DeleteReportCommand(reportId);
         reportCommandService.handle(command);
