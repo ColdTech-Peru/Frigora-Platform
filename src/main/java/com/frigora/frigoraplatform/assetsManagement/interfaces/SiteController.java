@@ -11,6 +11,7 @@ import com.frigora.frigoraplatform.assetsManagement.interfaces.rest.resources.Si
 import com.frigora.frigoraplatform.assetsManagement.interfaces.rest.transform.CreateSiteCommandFromResourceAssembler;
 import com.frigora.frigoraplatform.assetsManagement.interfaces.rest.transform.SiteResourceFromEntityAssembler;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,7 +33,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/sites")
-@Tag(name = "Site")
+@Tag(name = "Site", description = "Endpoints for managing physical sites or locations where refrigeration assets are deployed")
 @RequiredArgsConstructor
 public class SiteController {
 
@@ -40,11 +41,11 @@ public class SiteController {
 	private final ISiteQueryService siteQueryService;
 
 	@PostMapping
-	@Operation(summary = "Create a new Site", description = "Create a new Site", operationId = "CreateSite")
+	@Operation(summary = "Create a new Site", description = "Creates a new physical site in the platform. Validates that no other site exists with the same Contact Name.", operationId = "CreateSite")
 	@ApiResponses({
-			@ApiResponse(responseCode = "201", description = "Created site"),
-			@ApiResponse(responseCode = "400", description = "The site was not created"),
-			@ApiResponse(responseCode = "409", description = "The site already exists")
+			@ApiResponse(responseCode = "201", description = "Site created successfully"),
+			@ApiResponse(responseCode = "400", description = "Bad request due to invalid data format"),
+			@ApiResponse(responseCode = "409", description = "Conflict: A site with the same Contact Name already exists")
 	})
 	public ResponseEntity<?> createSite(@Valid @RequestBody CreateSiteResource resource) {
 		CreateSiteCommand command = CreateSiteCommandFromResourceAssembler.fromResource(resource);
@@ -69,12 +70,14 @@ public class SiteController {
 	}
 
 	@GetMapping("/{id}")
-	@Operation(summary = "Gets a Site by Id", description = "Gets a Site for a given identifier", operationId = "GetSiteById")
+	@Operation(summary = "Gets a Site by Id", description = "Retrieves the details of a specific site using its unique identifier.", operationId = "GetSiteById")
 	@ApiResponses({
-			@ApiResponse(responseCode = "200", description = "The site was found"),
-			@ApiResponse(responseCode = "404", description = "The site was not found")
+			@ApiResponse(responseCode = "200", description = "The site was found and retrieved successfully"),
+			@ApiResponse(responseCode = "404", description = "The site with the specified ID was not found")
 	})
-	public ResponseEntity<SiteResource> getSiteById(@PathVariable int id) {
+	public ResponseEntity<SiteResource> getSiteById(
+			@Parameter(description = "The unique identifier of the site", required = true)
+			@PathVariable int id) {
 		var result = siteQueryService.handle(new GetSiteByIdQuery(id));
 
 		return result
@@ -83,8 +86,8 @@ public class SiteController {
 	}
 
 	@GetMapping
-	@Operation(summary = "Get all sites", description = "Gets the complete list of sites", operationId = "GetAllSites")
-	@ApiResponse(responseCode = "200", description = "List of sites")
+	@Operation(summary = "Get all sites", description = "Retrieves a comprehensive list of all physical sites registered in the Frigora platform.", operationId = "GetAllSites")
+	@ApiResponse(responseCode = "200", description = "List of sites retrieved successfully")
 	public ResponseEntity<List<SiteResource>> getAllSites() {
 		var results = siteQueryService.handle(new GetAllSitesQuery());
 		var resources = results.stream()
@@ -95,12 +98,14 @@ public class SiteController {
 	}
 
 	@DeleteMapping("/{id}")
-	@Operation(summary = "Delete Site", description = "Deletes a site.", operationId = "DeleteSite")
+	@Operation(summary = "Delete Site", description = "Permanently deletes a site from the system using its unique identifier.", operationId = "DeleteSite")
 	@ApiResponses({
-			@ApiResponse(responseCode = "204", description = "Site deleted."),
-			@ApiResponse(responseCode = "404", description = "Site not found.")
+			@ApiResponse(responseCode = "204", description = "Site deleted successfully (No content)"),
+			@ApiResponse(responseCode = "404", description = "The site with the specified ID was not found")
 	})
-	public ResponseEntity<String> deleteSite(@PathVariable int id) {
+	public ResponseEntity<String> deleteSite(
+			@Parameter(description = "The unique identifier of the site to be deleted", required = true)
+			@PathVariable int id) {
 		boolean deleted = siteCommandService.handle(new DeleteSiteCommand(id));
 
 		if (!deleted) {
