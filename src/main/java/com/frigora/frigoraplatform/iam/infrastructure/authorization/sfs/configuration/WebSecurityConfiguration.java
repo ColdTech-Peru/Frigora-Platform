@@ -96,7 +96,7 @@ public class WebSecurityConfiguration {
         http.cors(configurer -> configurer.configurationSource(request -> {
             CorsConfiguration cors = new CorsConfiguration();
 
-            cors.setAllowedOrigins(List.of("http://localhost:4200"));
+            cors.setAllowedOrigins(List.of("http://localhost:4200", "https://frigora-frontend.vercel.app"));
             cors.setAllowedMethods(List.of(
                     "GET",
                     "POST",
