@@ -20,7 +20,6 @@ public class ReviewCommandServiceImpl implements ReviewCommandService {
 
         var review = new Review(
                 command.serviceRequestId(),
-                command.ownerId(),
                 command.technicianId(),
                 command.rating(),
                 command.comment()

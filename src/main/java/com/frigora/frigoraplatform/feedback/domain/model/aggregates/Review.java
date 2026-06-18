@@ -1,7 +1,6 @@
 package com.frigora.frigoraplatform.feedback.domain.model.aggregates;
 
 
-import com.frigora.frigoraplatform.feedback.domain.model.valueobjects.OwnerId;
 import com.frigora.frigoraplatform.feedback.domain.model.valueobjects.ReviewRating;
 import com.frigora.frigoraplatform.servicerequests.domain.model.valueobjects.ServiceRequestId;
 import com.frigora.frigoraplatform.servicerequests.domain.model.valueobjects.TechnicianId;
@@ -21,10 +20,6 @@ public class Review extends AuditableAbstractAggregateRoot<Review> {
     private ServiceRequestId serviceRequestId;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "owner_id"))
-    private OwnerId ownerId;
-
-    @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "technician_id"))
     private TechnicianId technicianId;
 
@@ -39,14 +34,12 @@ public class Review extends AuditableAbstractAggregateRoot<Review> {
     private String comment;
 
     public Review(
-            int serviceRequestId,
-            int ownerId,
-            int technicianId,
-            int rating,
+            Integer serviceRequestId,
+            Integer technicianId,
+            Integer rating,
             String comment
     ) {
         this.serviceRequestId = new ServiceRequestId(serviceRequestId);
-        this.ownerId = new OwnerId(ownerId);
         this.technicianId = new TechnicianId(technicianId);
         this.rating = new ReviewRating(rating);
         this.comment = comment;

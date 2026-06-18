@@ -10,9 +10,6 @@ public record ReviewResource(
         @Schema(description = "Identificador único de la solicitud de servicio asociada", example = "101")
         int serviceRequestId,
 
-        @Schema(description = "Identificador del propietario o cliente que realizó la reseña", example = "42")
-        int ownerId,
-
         @Schema(description = "Identificador del técnico que ejecutó el servicio", example = "15")
         int technicianId,
 

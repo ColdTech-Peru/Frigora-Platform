@@ -10,7 +10,6 @@ public class CreateReviewCommandFromResourceAssembler {
 
         return new CreateReviewCommand(
                 resource.serviceRequestId(),
-                resource.ownerId(),
                 resource.technicianId(),
                 resource.rating(),
                 resource.comment()

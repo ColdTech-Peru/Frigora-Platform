@@ -9,7 +9,6 @@ public class ReviewResourceFromEntityAssembler {
         return new ReviewResource(
                 entity.getId(),
                 entity.getServiceRequestId().getValue(),
-                entity.getOwnerId().getValue(),
                 entity.getTechnicianId().getValue(),
                 entity.getRating().getValue(),
                 entity.getComment()
