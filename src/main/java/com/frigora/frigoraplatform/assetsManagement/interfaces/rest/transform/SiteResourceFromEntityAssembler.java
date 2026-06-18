@@ -10,7 +10,9 @@ public class SiteResourceFromEntityAssembler {
                 entity.getName(),
                 entity.getAddress(),
                 entity.getContactName(),
-                entity.getPhone()
-        )
+                entity.getPhone(),
+                entity.getCreatedDate(),
+                entity.getUpdatedDate()
+        );
     }
 }

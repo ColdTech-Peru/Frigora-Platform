@@ -1,11 +1,15 @@
 package com.frigora.frigoraplatform.assetsManagement.domain.model.aggregates;
 
 import com.frigora.frigoraplatform.assetsManagement.domain.model.commands.CreateSiteCommand;
+import jakarta.persistence.Entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Getter;
 
+@Entity
+@Getter
 public class Site extends SiteAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
