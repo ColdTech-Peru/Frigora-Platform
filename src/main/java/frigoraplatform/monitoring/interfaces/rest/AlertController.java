@@ -14,6 +14,8 @@ import frigoraplatform.monitoring.interfaces.rest.transform.AlertResourceFromEnt
 import frigoraplatform.monitoring.interfaces.rest.transform.CreateAlertCommandFromResourceAssembler;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,7 +32,8 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/Alert")
+@RequestMapping("/api/v1/alert")
+@Tag(name = "Alert", description = "Alert management endpoints")
 @RequiredArgsConstructor
 public class AlertController {
 
@@ -40,6 +43,7 @@ public class AlertController {
     private final CreateAlertCommandFromResourceAssembler createAlertCommandFromResourceAssembler;
 
     @GetMapping
+    @Operation(summary = "Gets all Alerts or by Tenant/Equipment", description = "Returns all alerts or filters them by tenantId or equipmentId.")
     public ResponseEntity<List<AlertResource>> getAll(
             @RequestParam(required = false) Long tenantId,
             @RequestParam(required = false) Long equipmentId) {
@@ -53,6 +57,7 @@ public class AlertController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Gets all Alerts By Id", description = "Returns a specific alert by its id.")
     public ResponseEntity<AlertResource> getById(@PathVariable Long id) {
         return alertQueryService.getById(new GetAlertByIdQuery(id))
                 .map(alert -> ResponseEntity.ok(alertResourceFromEntityAssembler.toResource(alert)))
@@ -60,13 +65,15 @@ public class AlertController {
     }
 
     @PostMapping
+    @Operation(summary = "Create a new Alert", description = "Creates a new alert in the monitoring bounded context.")
     public ResponseEntity<AlertResource> create(@Valid @RequestBody CreateAlertResource resource) {
         var created = alertCommandService.create(createAlertCommandFromResourceAssembler.toCommand(resource));
         var response = alertResourceFromEntityAssembler.toResource(created);
-        return ResponseEntity.created(URI.create("/api/v1/Alert/" + response.getId())).body(response);
+        return ResponseEntity.created(URI.create("/api/v1/alert/" + response.getId())).body(response);
     }
 
     @PatchMapping("/{id}/acknowledge")
+    @Operation(summary = "Acknowledges an Alert", description = "Changes the alert status to Acknowledged.")
     public ResponseEntity<AlertResource> acknowledge(@PathVariable Long id) {
         return alertCommandService.acknowledge(new AcknowledgeAlertCommand(id))
                 .map(alert -> ResponseEntity.ok(alertResourceFromEntityAssembler.toResource(alert)))
@@ -74,6 +81,7 @@ public class AlertController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a Alert", description = "Deletes an alert by its id.")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         var deleted = alertCommandService.delete(new DeleteAlertCommand(id));
         return deleted ? ResponseEntity.noContent().build() : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
