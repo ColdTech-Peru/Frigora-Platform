@@ -1,6 +1,8 @@
 package com.frigora.frigoraplatform.assetsManagement.domain.model.aggregates;
 
 import com.frigora.frigoraplatform.assetsManagement.domain.model.commands.CreateSiteCommand;
+import com.frigora.frigoraplatform.feedback.domain.model.aggregates.Review;
+import com.frigora.frigoraplatform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
@@ -10,10 +12,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class Site extends SiteAudit {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+public class Site extends AuditableAbstractAggregateRoot<Site> {
 
     @Column(nullable = false)
     private String name;

@@ -45,21 +45,32 @@ public class BearerAuthorizationRequestFilter extends OncePerRequestFilter {
      * @param filterChain The filter chain object.
      */
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+
+    ) throws ServletException, IOException {
         try {
+            LOGGER.info("FILTER EXECUTED: {}", request.getRequestURI());
             String token = tokenService.getBearerTokenFrom(request);
+
             LOGGER.info("Token: {}", token);
             if (token != null && tokenService.validateToken(token)) {
-                String username = tokenService.getUsernameFromToken(token);
-                var userDetails = userDetailsService.loadUserByUsername(username);
-                SecurityContextHolder.getContext().setAuthentication(UsernamePasswordAuthenticationTokenBuilder.build(userDetails, request));
-            } else {
-                LOGGER.info("Token is not valid");
-            }
 
+                String username = tokenService.getUsernameFromToken(token);
+
+                var userDetails = userDetailsService.loadUserByUsername(username);
+
+                var auth = UsernamePasswordAuthenticationTokenBuilder.build(userDetails, request);
+
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }
         } catch (Exception e) {
-            LOGGER.error("Cannot set user authentication: {}", e.getMessage());
+            LOGGER.error("Cannot set user authentication", e);
+            SecurityContextHolder.clearContext();
         }
+
         filterChain.doFilter(request, response);
     }
 }

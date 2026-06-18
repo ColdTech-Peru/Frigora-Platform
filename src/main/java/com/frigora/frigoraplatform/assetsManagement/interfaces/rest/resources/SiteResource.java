@@ -7,9 +7,7 @@ public record SiteResource (
         String name,
         String address,
         String contactName,
-        String phone,
-        OffsetDateTime created,
-        OffsetDateTime updated
+        String phone
 ){
 
 }

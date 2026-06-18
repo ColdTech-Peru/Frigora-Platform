@@ -5,9 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface JpaReportRepository extends JpaRepository<Site, Integer> {
+public interface JpaSiteRepository extends JpaRepository<Site, Integer> {
 
-    List<Site> findById(Integer Id);
-
-    List<Site> findAll(String name);
+    List<Site> findByName(String name);
 }

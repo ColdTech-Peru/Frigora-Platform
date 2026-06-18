@@ -71,16 +71,32 @@ public class ServiceRequestsController {
     }
 
     @GetMapping("/provider/{providerId}")
-    @Operation(summary = "Get Service Requests by Provider Id", description = "Gets all Service Requests for a given Provider Id, optionally filtered by status", operationId = "GetServiceRequestsByProviderId")
+    @Operation(
+            summary = "Get Service Requests by Provider Id",
+            description = "Gets all Service Requests for a given Provider Id, optionally filtered by status",
+            operationId = "GetServiceRequestsByProviderId"
+    )
     @ApiResponse(responseCode = "200", description = "The service requests were found")
     public ResponseEntity<?> getServiceRequestsByProviderId(
             @PathVariable int providerId,
-            @RequestParam(required = false) ServiceRequestStatus.EServiceRequestStatus status) {
-        var query = new GetServiceRequestsByProviderIdQuery(providerId, status);
+            @RequestParam(required = false) String status
+    ) {
+        System.out.println("ENTRO AL CONTROLLER");
+
+        ServiceRequestStatus.EServiceRequestStatus enumStatus = null;
+
+        if (status != null && !status.isBlank()) {
+            enumStatus = ServiceRequestStatus.EServiceRequestStatus.fromJson(status);
+        }
+
+        var query = new GetServiceRequestsByProviderIdQuery(providerId, enumStatus);
+
         var serviceRequests = serviceRequestQueryService.handle(query);
+
         var serviceRequestResources = serviceRequests.stream()
                 .map(ServiceRequestResourceFromEntityAssembler::toResourceFromEntity)
                 .toList();
+
         return ResponseEntity.ok(serviceRequestResources);
     }
 
