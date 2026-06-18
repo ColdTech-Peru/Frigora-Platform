@@ -1,4 +1,4 @@
-package com.frigora.frigoraplatform.servicerequests.application.commandservices;
+package com.frigora.frigoraplatform.servicerequests.application.internal.commandservices;
 
 import com.frigora.frigoraplatform.servicerequests.domain.model.aggregates.ServiceRequest;
 import com.frigora.frigoraplatform.servicerequests.domain.model.commands.*;

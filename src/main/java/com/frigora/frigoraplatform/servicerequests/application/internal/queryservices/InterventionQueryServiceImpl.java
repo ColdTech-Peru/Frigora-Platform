@@ -1,4 +1,4 @@
-package com.frigora.frigoraplatform.servicerequests.application.queryservices;
+package com.frigora.frigoraplatform.servicerequests.application.internal.queryservices;
 
 import com.frigora.frigoraplatform.servicerequests.domain.model.aggregates.Intervention;
 import com.frigora.frigoraplatform.servicerequests.domain.model.queries.GetInterventionByIdQuery;
