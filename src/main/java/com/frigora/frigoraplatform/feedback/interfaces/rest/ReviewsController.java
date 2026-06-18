@@ -10,6 +10,7 @@ import com.frigora.frigoraplatform.feedback.interfaces.rest.resources.ReviewReso
 import com.frigora.frigoraplatform.feedback.interfaces.rest.transform.CreateReviewCommandFromResourceAssembler;
 import com.frigora.frigoraplatform.feedback.interfaces.rest.transform.ReviewResourceFromEntityAssembler;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -33,8 +34,9 @@ public class ReviewsController {
     }
 
     @PostMapping
-    @Operation(summary = "Create a Review")
-    @ApiResponse(responseCode = "201", description = "The review was created")
+    @Operation(summary = "Create a Review", description = "Creates a new review based on the provided resource data. Validates the input before processing.")
+    @ApiResponse(responseCode = "201", description = "The review was successfully created")
+    @ApiResponse(responseCode = "400", description = "Bad request due to invalid or incomplete review data")
     public ResponseEntity<ReviewResource> createReview(
             @RequestBody CreateReviewResource resource) {
 
@@ -57,10 +59,11 @@ public class ReviewsController {
     }
 
     @GetMapping("/{reviewId}")
-    @Operation(summary = "Get Review by Id")
-    @ApiResponse(responseCode = "200", description = "The review was found")
-    @ApiResponse(responseCode = "404", description = "The review was not found")
+    @Operation(summary = "Get Review by Id", description = "Retrieves a specific review using its unique identifier.")
+    @ApiResponse(responseCode = "200", description = "The review was found and retrieved successfully")
+    @ApiResponse(responseCode = "404", description = "The review with the specified ID was not found")
     public ResponseEntity<ReviewResource> getReviewById(
+            @Parameter(description = "The unique identifier of the review", required = true)
             @PathVariable int reviewId) {
 
         var query = new GetReviewByIdQuery(reviewId);
@@ -78,9 +81,10 @@ public class ReviewsController {
     }
 
     @GetMapping("/service-request/{serviceRequestId}")
-    @Operation(summary = "Get Reviews by Service Request Id")
-    @ApiResponse(responseCode = "200", description = "The reviews were found")
+    @Operation(summary = "Get Reviews by Service Request Id", description = "Retrieves all feedback and reviews associated with a specific service request.")
+    @ApiResponse(responseCode = "200", description = "The list of reviews was found and retrieved")
     public ResponseEntity<?> getReviewsByServiceRequestId(
+            @Parameter(description = "The unique identifier of the associated service request", required = true)
             @PathVariable int serviceRequestId) {
 
         var query =
@@ -96,8 +100,8 @@ public class ReviewsController {
     }
 
     @GetMapping
-    @Operation(summary = "Get All Reviews")
-    @ApiResponse(responseCode = "200", description = "The reviews were found")
+    @Operation(summary = "Get All Reviews", description = "Retrieves a comprehensive list of all existing reviews in the Frigora platform.")
+    @ApiResponse(responseCode = "200", description = "The reviews were found and retrieved")
     public ResponseEntity<?> getAllReviews() {
 
         var reviews =
