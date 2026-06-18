@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class OpenApiConfiguration {
-    // Properties
     @Value("${spring.application.name}")
     String applicationName;
 
@@ -23,13 +22,8 @@ public class OpenApiConfiguration {
     @Value("${documentation.application.version}")
     String applicationVersion;
 
-    // Methods
-
     @Bean
     public OpenAPI learningPlatformOpenApi() {
-
-
-        // General configuration
         var openApi = new OpenAPI();
         openApi
                 .info(new Info()
@@ -37,15 +31,9 @@ public class OpenApiConfiguration {
                         .description(this.applicationDescription)
                         .version(this.applicationVersion)
                         .license(new License().name("Apache 2.0")
-                                .url("https://springdoc.org")))
-                .externalDocs(new ExternalDocumentation()
-                        .description("ACME Learning Platform wiki Documentation")
-                        .url("https://acme-learning-platform.wiki.github.io/docs"));
-
-        // Add a security scheme
+                                .url("https://springdoc.org")));
 
         final String securitySchemeName = "bearerAuth";
-
         openApi.addSecurityItem(new SecurityRequirement()
                         .addList(securitySchemeName))
                 .components(new Components()
@@ -55,8 +43,6 @@ public class OpenApiConfiguration {
                                         .type(SecurityScheme.Type.HTTP)
                                         .scheme("bearer")
                                         .bearerFormat("JWT")));
-
-        // Return the OpenAPI configuration object with all the settings
 
         return openApi;
     }
